@@ -1,0 +1,7 @@
+# Typings the engine writes beside a mod it loads from a folder.
+.claude-plugin/types/
+
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

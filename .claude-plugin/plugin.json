@@ -1,0 +1,7 @@
+{
+  "name": "subagents-workflow",
+  "version": "0.1.0",
+  "description": "Side pane for Claude Code (toggle with /panel): account usage and limits, model and effort switchers, live tracking of the work Claude delegates to Codex and to its own subagents, session goals, and a voice dictation button.",
+  "author": { "name": "cryptotweezer" },
+  "types": "./types/index.d.ts"
+}

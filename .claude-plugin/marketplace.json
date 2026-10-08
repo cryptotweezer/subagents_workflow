@@ -1,0 +1,6 @@
+{
+  "name": "subagents-workflow",
+  "description": "Claude Code mods for orchestrating cheaper agents: delegate to Codex and to Claude subagents, and watch it all in a side pane.",
+  "owner": { "name": "cryptotweezer" },
+  "plugins": [{ "name": "subagents-workflow", "source": "./" }]
+}
