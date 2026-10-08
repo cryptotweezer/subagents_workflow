@@ -25,6 +25,7 @@ one-click controls for the model, the effort level and common commands.
 - [Privacy](#privacy)
 - [Known limitations](#known-limitations)
 - [Development](#development)
+- [Adding another agent](#adding-another-agent)
 - [License](#license)
 
 ## What you get
@@ -76,8 +77,9 @@ Codex is optional. Without it the pane shows `codex missing`, Claude is told not
 everything else works, including delegation to Claude's own subagents.
 
 **Other external agents.** Codex is the only external agent supported today. The task list and the pane
-are built to hold more than one, and others (OpenCode and similar CLIs) are on the roadmap. Whichever
-agent you use needs its own CLI installed and its own active account.
+are built to hold more than one, so you can wire in your own (OpenCode and similar CLIs): see
+[Adding another agent](#adding-another-agent). Whichever agent you use needs its own CLI installed and its
+own active account.
 
 ## Install
 
@@ -278,6 +280,28 @@ claude plugin test ./subagents_workflow       # run the tests
 | `tests/` | Tests, run with `claude plugin test` |
 
 Bug reports and ideas are welcome as GitHub issues.
+
+## Adding another agent
+
+Codex is the only external agent wired in, but the task list and the pane already hold any agent. To add
+another CLI (OpenCode or similar), fork the repository, load your copy with `claude --plugin-dir`, and ask
+Claude to wire it in. Do not edit the installed copy: an update overwrites it.
+
+It is a coding task, not a setting, and no other agent has been tested. Point Claude at this list, which is
+every place Codex is specific:
+
+| Piece | Where | What the new agent needs |
+| --- | --- | --- |
+| Launcher | `bin/codex-task.mjs` | A script that runs the CLI with the instruction, prints one summary line and then the report, and records a verdict. |
+| Reading the call and its output | `hooks/codex.ts` (`readCall`, `readOutcome`) | The same two readers for the new launcher: what a Bash command asks of it, and what it printed. |
+| Tracking | `hooks/register.tsx` (the `tool.call` hook on `Bash`) | A task enlisted when the launcher is called, ended when it answers. |
+| The agent's name | `types/index.d.ts` (`ExternalTask.agent`) | Its name added to `'codex' | 'claude'`. |
+| What Claude is told | `hooks/codex.ts` (`composeBrief`) | A text of its own in the system prompt: how to run it, when to delegate, how to judge it. |
+| Link and limits (optional) | `hooks/register.tsx` (`link`), `bin/codex-limits.mjs` | A check that the CLI is installed and signed in, and its quota if it exposes one, shown under EXTERNAL AGENTS. |
+
+Then add tests beside `tests/codex.test.ts` and run `claude plugin validate` and `claude plugin test`.
+Before sending work to a new agent, read its privacy terms: the instruction and the files it reads leave
+your machine under that agent's account.
 
 ## License
 
